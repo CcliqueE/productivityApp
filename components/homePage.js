@@ -1,49 +1,78 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Monoton_400Regular } from '@expo-google-fonts/monoton'
-import { useFonts } from 'expo-font'
-import AppLoading from 'expo-app-loading'
+import React, { Component } from 'react';
+import { LayoutAnimation, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import * as Font from 'expo-font'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-export default function HomePage() {
+let customFonts = {
+    'patchwork': require('../assets/fonts/Patchwork-Stitchlings.ttf')
+}
 
-    let [fontsLoaded, error] = useFonts({
-        Monoton_400Regular
-    })
+export default class HomePage extends Component {
 
-    if (!fontsLoaded) {
-        return <AppLoading />
+    constructor(props) {
+        super(props)
+        this.state = {
+            dropDownAnim: 60,
+            opacityVal: 1
+        }
     }
 
-    return (
-        <View style={styles.container}>
-        
-        <View style={styles.motives} >
-            <View style={styles.header} >
-                <Text style={styles.headerText} >Assignments</Text>
-            </View>
-            <View>
-                <View style={styles.assignments}>
+    async _loadFontsAsync() {
+        await Font.loadAsync(customFonts)
+        this.setState({ fontsLoaded: true })
+    }
 
+    componentDidMount() {
+        this._loadFontsAsync()
+    }
+
+    toggleAnim = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+        this.setState({
+            dropDownAnim: this.state.dropDownAnim === 60 ? 150 : 60,
+            opacityVal: this.state.opacityVal === 1 ? 0 : 1
+        })
+    }
+
+
+
+    render() {
+        return (
+            <View style={styles.container}>
+                <View style={styles.motives} >
+                    <View style={styles.header} >
+                        <Text style={styles.headerText} >assignments</Text>
+                    </View>
+                    <View>
+                        <TouchableWithoutFeedback onPress={this.toggleAnim} >
+                        <View style={[styles.assignments, this.state.toggleAnim === 60 ? {height: this.state.dropDownAnim}
+                        : {height: this.state.dropDownAnim}]}>
+                            <Text style={styles.assignText} >Title</Text>
+                            <Icon name='angle-down' style={[styles.downArrow, this.state.toggleAnim === 60 ? {opacity: this.state.opacityVal}
+                             : {opacity: this.state.opacityVal}]} ></Icon>
+                        </View>
+                        </TouchableWithoutFeedback>
+                    </View>
+                    <View style={styles.addItem} >
+                        <Icon name='plus' style={styles.addItemSym} />
+                    </View>
                 </View>
+                <View style={styles.letters} >
+                    <View style={styles.lettersTextView} >
+                        <Text style={styles.lettersText} >A</Text>
+                        <Text style={styles.lettersText} >A</Text>
+                        <Text style={styles.lettersText} >A</Text>
+                        <Text style={styles.lettersText} >A</Text>
+                    </View>
+                    <Icon name='chevron-right' style={styles.arrowRight} ></Icon>
+                </View>
+                {/* <Text>https://central.swoca.net/auth/login?signin=18e40287384ff23dd7bc70c3df30752f</Text> */}
             </View>
-            <View style={styles.addItem} >
-                <Icon name='plus' style={styles.addItemSym} />
-            </View>
-        </View>
-        <View style={styles.letters} >
-            <View style={styles.lettersTextView} >
-                <Text style={styles.lettersText} >A</Text>
-                <Text style={styles.lettersText} >A</Text>
-                <Text style={styles.lettersText} >A</Text>
-                <Text style={styles.lettersText} >A</Text>
-            </View>
-            <Icon name='chevron-right' style={styles.arrowRight} ></Icon>
-        </View>
-        {/* <Text>https://central.swoca.net/auth/login?signin=18e40287384ff23dd7bc70c3df30752f</Text> */}
-        </View>
-    );
+        )
+    }
 }
+
+        
 
 const styles = StyleSheet.create({
     container: {
@@ -91,11 +120,11 @@ const styles = StyleSheet.create({
 
     },
     headerText: {
-        marginTop: 40,
+        marginTop: 50,
         marginBottom: 10,
         marginLeft: 60,
-        fontSize: 40,
-        fontFamily: 'Monoton_400Regular',
+        fontSize: 20,
+        fontFamily: 'patchwork',
         textAlign: 'center',
         color: 'lightgray'
     },
@@ -103,8 +132,24 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 110,
         backgroundColor: 'gray',
-        height: 60,
         width: '100%'
+    },
+    assignText: {
+        color: 'white',
+        fontSize: 37,
+        marginLeft: 70,
+        marginTop: 10
+    },
+    downArrow: {
+        position: 'absolute',
+        top: 15,
+        right: 30,
+        color: 'white',
+        fontSize: 30,
+        opacity: 1
+    },
+    assignAnim: {
+        height: 150
     },
     addItem: {
         position: 'absolute',
